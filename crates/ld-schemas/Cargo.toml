@@ -1,0 +1,10 @@
+[package]
+name = "ld-schemas"
+version = "0.1.0"
+edition = "2021"
+description = "Core data transfer schemas and types for LDrago CLI"
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }

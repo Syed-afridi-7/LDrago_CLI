@@ -1,0 +1,19 @@
+[package]
+name = "ld-cli"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance CLI orchestrator for LDrago AI Platform"
+
+[[bin]]
+name = "ldrago"
+path = "src/main.rs"
+
+[dependencies]
+ld-schemas = { workspace = true }
+ld-models = { workspace = true }
+clap = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+figment = { workspace = true }
+anyhow = { workspace = true }

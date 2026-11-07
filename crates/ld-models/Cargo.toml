@@ -1,0 +1,14 @@
+[package]
+name = "ld-models"
+version = "0.1.0"
+edition = "2021"
+description = "Model abstraction layer and provider adapters for LDrago CLI"
+
+[dependencies]
+ld-schemas = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+async-trait = { workspace = true }
+thiserror = { workspace = true }

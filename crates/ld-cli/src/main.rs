@@ -40,6 +40,7 @@ async fn main() -> anyhow::Result<()> {
 
     match cli.command {
         Some(Commands::Version) | None => {
+            commands::logo::render_ldrago_dragon();
             println!("========================================================");
             println!("  LDrago CLI — Local Twin AI Platform (v{})", env!("CARGO_PKG_VERSION"));
             println!("========================================================");
@@ -50,6 +51,26 @@ async fn main() -> anyhow::Result<()> {
             println!("  • Context Engine: High-throughput ignore scanner, symbol indexer & citation engine");
             println!("  • Policy Engine: Zero-trust safety gate, risk classifier & JSONL audit trail");
             println!("  • Core CLI: Rust (tokio + clap + serde + figment)");
+        }
+
+        Some(Commands::Logo { target, all }) => {
+            commands::logo::execute_logo(target, all)?;
+        }
+
+        Some(Commands::Ldrago) => {
+            commands::logo::render_ldrago_dragon();
+        }
+
+        Some(Commands::Grok) => {
+            commands::logo::render_grok_logo();
+        }
+
+        Some(Commands::Claude) => {
+            commands::logo::render_claude_logo();
+        }
+
+        Some(Commands::Ag) | Some(Commands::Antigravity) => {
+            commands::logo::render_ag_logo();
         }
 
         Some(Commands::Doctor) => {

@@ -17,6 +17,7 @@ ld-schemas = { workspace = true }
 ld-models = { workspace = true }
 ld-context = { workspace = true }
 ld-policy = { workspace = true }
+ld-sandbox = { workspace = true }
 clap = { workspace = true }
 tokio = { workspace = true }
 serde = { workspace = true }

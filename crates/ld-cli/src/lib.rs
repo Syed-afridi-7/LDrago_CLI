@@ -56,6 +56,41 @@ pub enum Commands {
     Logo,
     /// Display the L-Drago Beyblade Dragon logo (alias for logo)
     Ldrago,
+    /// Execute a command safely in a sandboxed, environment-scrubbed subprocess
+    Run {
+        /// The command line string to execute
+        command: String,
+        /// Automatically approve execution without confirmation prompt
+        #[arg(short, long)]
+        yes: bool,
+        /// Timeout limit in seconds
+        #[arg(short, long, default_value_t = 30)]
+        timeout: u64,
+    },
+    /// Inspect and atomically apply a patch with dry-run and backup safety
+    Patch {
+        /// Target file path to patch
+        file: String,
+        /// Replacement content
+        #[arg(short, long)]
+        content: String,
+        /// Preview diff without writing any changes to disk
+        #[arg(short, long)]
+        dry_run: bool,
+        /// Automatically approve patch without confirmation prompt
+        #[arg(short, long)]
+        yes: bool,
+    },
+    /// Roll back a file to its automatic backup (.bak) created during patching
+    Rollback {
+        /// Target file path to roll back
+        file: String,
+    },
+    /// Create, list, or restore workspace snapshot checkpoints
+    Checkpoint {
+        #[command(subcommand)]
+        action: commands::checkpoint::CheckpointAction,
+    },
     /// Send an instruction or prompt to a brain
     Ask {
         /// Text instruction or prompt to evaluate

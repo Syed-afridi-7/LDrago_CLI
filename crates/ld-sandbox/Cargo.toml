@@ -1,0 +1,20 @@
+[package]
+name = "ld-sandbox"
+version = "0.1.0"
+edition = "2021"
+description = "Secure tool sandboxing, path containment, atomic diff patching, and rollback checkpoints for LDrago CLI"
+
+[dependencies]
+ld-schemas = { workspace = true }
+ld-policy = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+chrono = { workspace = true }
+similar = { workspace = true }
+walkdir = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

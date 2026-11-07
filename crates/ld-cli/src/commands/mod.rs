@@ -1,6 +1,9 @@
 pub mod benchmark;
+pub mod checkpoint;
 pub mod context;
 pub mod logo;
+pub mod patch;
 pub mod plan;
 pub mod progress;
+pub mod run;
 pub mod train;

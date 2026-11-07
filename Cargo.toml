@@ -4,6 +4,7 @@ members = [
     "crates/ld-models",
     "crates/ld-context",
     "crates/ld-policy",
+    "crates/ld-sandbox",
     "crates/ld-cli",
 ]
 resolver = "2"
@@ -28,9 +29,11 @@ regex = "1"
 tempfile = "3"
 assert_cmd = "2"
 predicates = "3"
+similar = "2"
 
 # Internal crate dependencies
 ld-schemas = { path = "crates/ld-schemas" }
 ld-models = { path = "crates/ld-models" }
 ld-context = { path = "crates/ld-context" }
 ld-policy = { path = "crates/ld-policy" }
+ld-sandbox = { path = "crates/ld-sandbox" }

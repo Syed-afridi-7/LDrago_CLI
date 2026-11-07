@@ -117,6 +117,22 @@ async fn main() -> anyhow::Result<()> {
             commands::benchmark::execute_benchmark(&brain, tokens, quantized, &router).await?;
         }
 
+        Some(Commands::Run { command, yes, timeout }) => {
+            commands::run::execute_run(&command, yes, timeout).await?;
+        }
+
+        Some(Commands::Patch { file, content, dry_run, yes }) => {
+            commands::patch::execute_patch(&file, &content, dry_run, yes)?;
+        }
+
+        Some(Commands::Rollback { file }) => {
+            commands::patch::execute_rollback(&file)?;
+        }
+
+        Some(Commands::Checkpoint { action }) => {
+            commands::checkpoint::execute_checkpoint(action)?;
+        }
+
         Some(Commands::Ask {
             prompt,
             brain,

@@ -1,57 +1,10 @@
-use clap::{Parser, Subcommand};
+use clap::Parser;
+use ld_cli::config::AppConfig;
+use ld_cli::{commands, Cli, Commands, ModelCommands};
 use ld_models::{CustomBrainAdapter, ModelAdapter, ModelRouter, OllamaAdapter};
 use ld_schemas::{BrainType, CompletionRequest, HealthStatus};
 use std::sync::Arc;
 use std::time::Instant;
-
-mod config;
-use config::AppConfig;
-
-#[derive(Parser, Debug)]
-#[command(
-    name = "ldrago",
-    author = "LDrago Team",
-    version = env!("CARGO_PKG_VERSION"),
-    about = "LDrago CLI — Multi-engine local AI orchestrator",
-    long_about = "LDrago is a modular, production-ready AI CLI featuring two custom neural architectures built from scratch in PyTorch (Transformer & SSM) alongside local Ollama integration."
-)]
-struct Cli {
-    #[command(subcommand)]
-    command: Option<Commands>,
-}
-
-#[derive(Subcommand, Debug)]
-enum Commands {
-    /// Run diagnostic probes across all three AI engines
-    Doctor,
-    /// Inspect and manage registered model engines
-    Model {
-        #[command(subcommand)]
-        action: ModelCommands,
-    },
-    /// Send an instruction or prompt to a brain
-    Ask {
-        /// Text instruction or prompt to evaluate
-        prompt: String,
-        /// Target brain: coding (Transformer), design (SSM), general (Ollama), or auto
-        #[arg(short, long, default_value = "auto")]
-        brain: String,
-        /// Maximum number of tokens to generate
-        #[arg(short, long, default_value_t = 64)]
-        max_tokens: u32,
-        /// Sampling temperature (0.0 to 1.0)
-        #[arg(short, long, default_value_t = 0.7)]
-        temperature: f32,
-    },
-    /// Print LDrago version and system architecture information
-    Version,
-}
-
-#[derive(Subcommand, Debug)]
-enum ModelCommands {
-    /// List all registered model engines and their status
-    List,
-}
 
 fn build_router(cfg: &AppConfig) -> ModelRouter {
     let mut router = ModelRouter::new();
@@ -186,6 +139,10 @@ async fn main() -> anyhow::Result<()> {
                     eprintln!("Tip: Verify the local backend server is running with 'ldrago doctor'.");
                 }
             }
+        }
+
+        Some(Commands::Train { brain, micro, steps }) => {
+            commands::train::execute_train(&brain, micro, steps)?;
         }
     }
 

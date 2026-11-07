@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "High-performance CLI orchestrator for LDrago AI Platform"
 
+[lib]
+name = "ld_cli"
+path = "src/lib.rs"
+
 [[bin]]
 name = "ldrago"
 path = "src/main.rs"

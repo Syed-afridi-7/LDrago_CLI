@@ -1,3 +1,4 @@
+pub mod benchmark;
 pub mod context;
 pub mod logo;
 pub mod plan;

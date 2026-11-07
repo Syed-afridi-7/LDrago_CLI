@@ -64,3 +64,7 @@ class SSMConfig:
     @property
     def d_inner(self) -> int:
         return self.expand * self.d_model
+
+    @property
+    def dim(self) -> int:
+        return self.d_model

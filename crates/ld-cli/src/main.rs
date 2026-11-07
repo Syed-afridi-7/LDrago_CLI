@@ -113,6 +113,10 @@ async fn main() -> anyhow::Result<()> {
             commands::progress::execute_progress(&config.coding_endpoint, &config.design_endpoint).await?;
         }
 
+        Some(Commands::Benchmark { brain, tokens, quantized }) => {
+            commands::benchmark::execute_benchmark(&brain, tokens, quantized, &router).await?;
+        }
+
         Some(Commands::Ask {
             prompt,
             brain,

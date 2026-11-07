@@ -40,6 +40,18 @@ pub enum Commands {
     },
     /// Display real-time dynamic development roadmap and completion dashboard
     Progress,
+    /// Benchmark inference throughput, latency, and tokens/sec for an LDrago engine
+    Benchmark {
+        /// Target brain: coding (Transformer), design (SSM), or general (Ollama)
+        #[arg(short, long, default_value = "coding")]
+        brain: String,
+        /// Number of tokens to generate
+        #[arg(short, long, default_value_t = 32)]
+        tokens: u32,
+        /// Benchmark with INT8 quantization mode
+        #[arg(long)]
+        quantized: bool,
+    },
     /// Display the L-Drago Beyblade Dragon logo (Golden, Red & Blue)
     Logo,
     /// Display the L-Drago Beyblade Dragon logo (alias for logo)

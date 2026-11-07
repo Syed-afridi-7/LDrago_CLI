@@ -12,7 +12,7 @@ Components:
 from __future__ import annotations
 
 import math
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -100,6 +100,8 @@ class GroupedQueryAttention(nn.Module):
         mask: Optional[torch.Tensor] = None,
         kv_cache: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         start_pos: int = 0,
+        kv_cache_container: Optional[Any] = None,
+        layer_idx: int = 0,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         batch_size, seq_len, _ = x.shape
 
@@ -110,7 +112,10 @@ class GroupedQueryAttention(nn.Module):
         q = apply_rope(q, cos, sin, start_pos=start_pos)
         k = apply_rope(k, cos, sin, start_pos=start_pos)
 
-        if kv_cache is not None:
+        if kv_cache_container is not None:
+            k, v = kv_cache_container.update(layer_idx=layer_idx, start_pos=start_pos, k=k, v=v)
+            new_cache = None
+        elif kv_cache is not None:
             prev_k, prev_v = kv_cache
             if isinstance(prev_k, torch.Tensor) and prev_k.numel() > 0:
                 k = torch.cat([prev_k, k], dim=1)
@@ -194,6 +199,8 @@ class TransformerBlock(nn.Module):
         mask: Optional[torch.Tensor] = None,
         kv_cache: Optional[Tuple[torch.Tensor, torch.Tensor]] = None,
         start_pos: int = 0,
+        kv_cache_container: Optional[Any] = None,
+        layer_idx: int = 0,
     ) -> Tuple[torch.Tensor, Optional[Tuple[torch.Tensor, torch.Tensor]]]:
         h, new_cache = self.attn(
             self.attn_norm(x),
@@ -202,6 +209,8 @@ class TransformerBlock(nn.Module):
             mask=mask,
             kv_cache=kv_cache,
             start_pos=start_pos,
+            kv_cache_container=kv_cache_container,
+            layer_idx=layer_idx,
         )
         x = x + h
         x = x + self.ffn(self.ffn_norm(x))
@@ -236,13 +245,14 @@ class LDragoCoder(nn.Module):
         kv_caches: Optional[List[Optional[Tuple[torch.Tensor, torch.Tensor]]]] = None,
         start_pos: int = 0,
         return_cache: bool = False,
-    ) -> Union[torch.Tensor, Tuple[torch.Tensor, List[Tuple[torch.Tensor, torch.Tensor]]]]:
+        kv_cache_container: Optional[Any] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, Any]]:
         """Forward pass.
 
         input_ids: (batch, seq_len)
         Returns:
             logits: (batch, seq_len, vocab_size)
-            optional new_kv_caches when return_cache=True
+            optional new_kv_caches or kv_cache_container
         """
         batch_size, seq_len = input_ids.shape
         x = self.tok_embeddings(input_ids)
@@ -256,6 +266,8 @@ class LDragoCoder(nn.Module):
                 self.rope_sin,
                 kv_cache=cache_i,
                 start_pos=start_pos,
+                kv_cache_container=kv_cache_container,
+                layer_idx=i,
             )
             if updated_cache is not None:
                 new_caches.append(updated_cache)
@@ -263,6 +275,8 @@ class LDragoCoder(nn.Module):
         x = self.norm(x)
         logits = self.lm_head(x)
 
+        if kv_cache_container is not None:
+            return logits, kv_cache_container
         if return_cache:
             return logits, new_caches
         return logits

@@ -1,8 +1,11 @@
 use clap::Parser;
 use ld_cli::config::AppConfig;
 use ld_cli::{commands, Cli, Commands, ModelCommands};
+use ld_context::CitationExtractor;
 use ld_models::{CustomBrainAdapter, ModelAdapter, ModelRouter, OllamaAdapter};
+use ld_policy::{SafetyGate, SafetyVerdict};
 use ld_schemas::{BrainType, CompletionRequest, HealthStatus};
+use std::env;
 use std::sync::Arc;
 use std::time::Instant;
 
@@ -44,6 +47,8 @@ async fn main() -> anyhow::Result<()> {
             println!("  • Custom Architecture #1 (Coding): Pure PyTorch Transformer (GQA + RoPE + SwiGLU)");
             println!("  • Custom Architecture #2 (Design): Pure PyTorch State-Space Model (Mamba Selective Scan)");
             println!("  • Local Engine #3 (General): Ollama local runtime adapter");
+            println!("  • Context Engine: High-throughput ignore scanner, symbol indexer & citation engine");
+            println!("  • Policy Engine: Zero-trust safety gate, risk classifier & JSONL audit trail");
             println!("  • Core CLI: Rust (tokio + clap + serde + figment)");
         }
 
@@ -91,18 +96,37 @@ async fn main() -> anyhow::Result<()> {
             }
         },
 
+        Some(Commands::Context { action }) => {
+            commands::context::execute_context(action)?;
+        }
+
+        Some(Commands::Plan { objective, brain }) => {
+            commands::plan::execute_plan(&objective, &brain, &router).await?;
+        }
+
+        Some(Commands::Progress) => {
+            commands::progress::execute_progress(&config.coding_endpoint, &config.design_endpoint).await?;
+        }
+
         Some(Commands::Ask {
             prompt,
             brain,
             max_tokens,
             temperature,
         }) => {
+            let safety = SafetyGate::default();
+            if let SafetyVerdict::Violation { reason, risk } = safety.check_prompt(&prompt) {
+                eprintln!("\n[SECURITY BLOCK] Safety Gate Intercepted Prompt:");
+                eprintln!("  Reason: {}", reason);
+                eprintln!("  Risk Level: {}", risk);
+                anyhow::bail!("Prompt rejected by security policy.");
+            }
+
             let target_brain = match brain.to_ascii_lowercase().as_str() {
                 "coding" | "coder" => BrainType::Coding,
                 "design" | "designer" => BrainType::Design,
                 "general" | "ollama" => BrainType::General,
                 _ => {
-                    // Auto-route heuristic: if prompt mentions UI, flow, or design -> Design Brain, else Coding Brain
                     let lower = prompt.to_ascii_lowercase();
                     if lower.contains("design") || lower.contains("flow") || lower.contains("ui") || lower.contains("ux") {
                         BrainType::Design
@@ -133,6 +157,19 @@ async fn main() -> anyhow::Result<()> {
                     println!("--------------------------------------------------------");
                     println!("{}", resp.text);
                     println!("--------------------------------------------------------");
+
+                    // Check for file citations in response
+                    if let Ok(cwd) = env::current_dir() {
+                        let extractor = CitationExtractor::new(&cwd);
+                        let citations = extractor.extract_and_verify(&resp.text);
+                        if !citations.is_empty() {
+                            println!("\nVerified Source Citations ({}):", citations.len());
+                            for c in citations {
+                                let status = if c.verified { "VERIFIED" } else { "UNVERIFIED" };
+                                println!("  • [{}] {} (L{}-L{})", status, c.relative_path, c.start_line, c.end_line);
+                            }
+                        }
+                    }
                 }
                 Err(err) => {
                     eprintln!("\nError from [{target_brain}] engine: {err}");

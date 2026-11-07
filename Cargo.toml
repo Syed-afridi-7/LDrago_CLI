@@ -2,6 +2,8 @@
 members = [
     "crates/ld-schemas",
     "crates/ld-models",
+    "crates/ld-context",
+    "crates/ld-policy",
     "crates/ld-cli",
 ]
 resolver = "2"
@@ -20,7 +22,15 @@ chrono = { version = "0.4", features = ["serde"] }
 url = { version = "2", features = ["serde"] }
 futures = "0.3"
 tokio-stream = "0.1"
+walkdir = "2"
+ignore = "0.4"
+regex = "1"
+tempfile = "3"
+assert_cmd = "2"
+predicates = "3"
 
 # Internal crate dependencies
 ld-schemas = { path = "crates/ld-schemas" }
 ld-models = { path = "crates/ld-models" }
+ld-context = { path = "crates/ld-context" }
+ld-policy = { path = "crates/ld-policy" }

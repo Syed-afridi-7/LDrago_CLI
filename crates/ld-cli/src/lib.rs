@@ -25,6 +25,21 @@ pub enum Commands {
         #[command(subcommand)]
         action: ModelCommands,
     },
+    /// Inspect workspace context, directory tree, manifest, or keyword search
+    Context {
+        #[command(subcommand)]
+        action: commands::context::ContextCommands,
+    },
+    /// Generate a grounded execution plan validated against JSON schema and security policies
+    Plan {
+        /// High-level objective to accomplish
+        objective: String,
+        /// Target brain: coding (Transformer), design (SSM), or general
+        #[arg(short, long, default_value = "coding")]
+        brain: String,
+    },
+    /// Display real-time dynamic development roadmap and completion dashboard
+    Progress,
     /// Send an instruction or prompt to a brain
     Ask {
         /// Text instruction or prompt to evaluate

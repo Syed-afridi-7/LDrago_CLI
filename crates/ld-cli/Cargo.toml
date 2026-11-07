@@ -15,9 +15,18 @@ path = "src/main.rs"
 [dependencies]
 ld-schemas = { workspace = true }
 ld-models = { workspace = true }
+ld-context = { workspace = true }
+ld-policy = { workspace = true }
 clap = { workspace = true }
 tokio = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 figment = { workspace = true }
 anyhow = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+
+[dev-dependencies]
+assert_cmd = { workspace = true }
+predicates = { workspace = true }
+tempfile = { workspace = true }

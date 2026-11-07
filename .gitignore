@@ -16,6 +16,10 @@ venv/
 dist/
 build/
 *.egg-info/
+.uv_cache/
+
+# LDrago Local Runtime State & Audit Logs
+.ldrago/
 
 # Environment and secrets
 .env

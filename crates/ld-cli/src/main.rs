@@ -53,24 +53,8 @@ async fn main() -> anyhow::Result<()> {
             println!("  • Core CLI: Rust (tokio + clap + serde + figment)");
         }
 
-        Some(Commands::Logo { target, all }) => {
-            commands::logo::execute_logo(target, all)?;
-        }
-
-        Some(Commands::Ldrago) => {
-            commands::logo::render_ldrago_dragon();
-        }
-
-        Some(Commands::Grok) => {
-            commands::logo::render_grok_logo();
-        }
-
-        Some(Commands::Claude) => {
-            commands::logo::render_claude_logo();
-        }
-
-        Some(Commands::Ag) | Some(Commands::Antigravity) => {
-            commands::logo::render_ag_logo();
+        Some(Commands::Logo) | Some(Commands::Ldrago) => {
+            commands::logo::execute_logo()?;
         }
 
         Some(Commands::Doctor) => {

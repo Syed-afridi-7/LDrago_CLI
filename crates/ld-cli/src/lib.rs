@@ -40,25 +40,10 @@ pub enum Commands {
     },
     /// Display real-time dynamic development roadmap and completion dashboard
     Progress,
-    /// Display terminal logo (L-Drago dragon, Anti-Gravity, Claude, Grok, or all)
-    Logo {
-        /// Target logo: ldrago, claude, grok, ag, or all
-        #[arg(value_enum)]
-        target: Option<commands::logo::LogoTarget>,
-        /// Showcase all logos in gallery mode
-        #[arg(long)]
-        all: bool,
-    },
     /// Display the L-Drago Beyblade Dragon logo (Golden, Red & Blue)
+    Logo,
+    /// Display the L-Drago Beyblade Dragon logo (alias for logo)
     Ldrago,
-    /// Display the Grok CLI logo
-    Grok,
-    /// Display the Claude CLI logo
-    Claude,
-    /// Display the Anti-Gravity CLI logo
-    Ag,
-    /// Display the Anti-Gravity CLI logo (alias for ag)
-    Antigravity,
     /// Send an instruction or prompt to a brain
     Ask {
         /// Text instruction or prompt to evaluate

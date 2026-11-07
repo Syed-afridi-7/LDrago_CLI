@@ -2,7 +2,7 @@ use assert_cmd::Command;
 use predicates::prelude::*;
 
 #[test]
-fn test_cli_ldrago_beyblade_dragon_logo() {
+fn test_cli_ldrago_command_displays_beyblade_dragon_logo() {
     let mut cmd = Command::cargo_bin("ldrago").unwrap();
     cmd.arg("ldrago");
     cmd.assert()
@@ -17,44 +17,24 @@ fn test_cli_ldrago_beyblade_dragon_logo() {
 }
 
 #[test]
-fn test_cli_grok_logo() {
+fn test_cli_logo_subcommand_displays_beyblade_dragon_logo() {
     let mut cmd = Command::cargo_bin("ldrago").unwrap();
-    cmd.arg("grok");
+    cmd.arg("logo");
     cmd.assert()
         .success()
-        .stdout(predicate::str::contains("G R O K"))
-        .stdout(predicate::str::contains("xAI"));
-}
-
-#[test]
-fn test_cli_claude_logo() {
-    let mut cmd = Command::cargo_bin("ldrago").unwrap();
-    cmd.arg("claude");
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("C L A U D E"))
-        .stdout(predicate::str::contains("ANTHROPIC"));
-}
-
-#[test]
-fn test_cli_ag_anti_gravity_logo() {
-    let mut cmd = Command::cargo_bin("ldrago").unwrap();
-    cmd.arg("ag");
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("A N T I - G R A V I T Y"))
-        .stdout(predicate::str::contains("QUANTUM LEVITATION"));
-}
-
-#[test]
-fn test_cli_logo_all_gallery_showcase() {
-    let mut cmd = Command::cargo_bin("ldrago").unwrap();
-    cmd.arg("logo").arg("--all");
-    cmd.assert()
-        .success()
-        .stdout(predicate::str::contains("LOGO GALLERY SHOWCASE"))
         .stdout(predicate::str::contains("L - D R A G O"))
-        .stdout(predicate::str::contains("A N T I - G R A V I T Y"))
-        .stdout(predicate::str::contains("C L A U D E"))
-        .stdout(predicate::str::contains("G R O K"));
+        .stdout(predicate::str::contains("B E Y B L A D E"))
+        .stdout(predicate::str::contains("DRAGON EMPEROR"))
+        .stdout(predicate::str::contains("LEFT-SPIN"));
+}
+
+#[test]
+fn test_cli_version_includes_ldrago_dragon_banner() {
+    let mut cmd = Command::cargo_bin("ldrago").unwrap();
+    cmd.arg("version");
+    cmd.assert()
+        .success()
+        .stdout(predicate::str::contains("L - D R A G O"))
+        .stdout(predicate::str::contains("DRAGON EMPEROR"))
+        .stdout(predicate::str::contains("LDrago CLI — Local Twin AI Platform"));
 }

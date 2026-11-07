@@ -28,6 +28,7 @@ pub struct AppState {
     pub ollama_healthy: bool,
     pub tokens_per_sec: f64,
     pub active_checkpoints: usize,
+    pub scroll_offset: usize,
     pub running: bool,
 }
 
@@ -50,6 +51,7 @@ impl AppState {
             ollama_healthy: false,
             tokens_per_sec: 0.0,
             active_checkpoints: 0,
+            scroll_offset: 0,
             running: true,
         }
     }
@@ -61,6 +63,30 @@ impl AppState {
             ActivePane::Chat => ActivePane::Telemetry,
             ActivePane::Telemetry => ActivePane::Engines,
         };
+    }
+
+    /// Cycle selected brain: Coding -> Design -> General -> Coding.
+    pub fn cycle_brain(&mut self) {
+        self.selected_brain = match self.selected_brain {
+            BrainType::Coding => BrainType::Design,
+            BrainType::Design => BrainType::General,
+            BrainType::General => BrainType::Coding,
+        };
+    }
+
+    /// Select a specific brain directly.
+    pub fn set_brain(&mut self, brain: BrainType) {
+        self.selected_brain = brain;
+    }
+
+    /// Scroll up (reveal older messages in history).
+    pub fn scroll_up(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_add(1);
+    }
+
+    /// Scroll down (reveal newer messages in history).
+    pub fn scroll_down(&mut self) {
+        self.scroll_offset = self.scroll_offset.saturating_sub(1);
     }
 
     /// Append a character to the active user prompt input buffer.

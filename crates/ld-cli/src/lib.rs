@@ -1,5 +1,6 @@
 pub mod commands;
 pub mod config;
+pub mod tui;
 
 use clap::{Parser, Subcommand};
 

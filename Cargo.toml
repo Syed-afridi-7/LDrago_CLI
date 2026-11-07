@@ -30,6 +30,8 @@ tempfile = "3"
 assert_cmd = "2"
 predicates = "3"
 similar = "2"
+ratatui = "0.28"
+crossterm = "0.28"
 
 # Internal crate dependencies
 ld-schemas = { path = "crates/ld-schemas" }

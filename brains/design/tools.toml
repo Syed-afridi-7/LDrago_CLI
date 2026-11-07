@@ -1,0 +1,44 @@
+# LDrago Design Brain — Tool Allowlist and Permissions
+
+brain = "design"
+version = "0.1.0"
+
+[[tools]]
+name = "read_file"
+description = "Reads component source, CSS/styling rules, or design token definitions within the workspace."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 10
+
+[[tools]]
+name = "list_files"
+description = "Discovers UI components, stylesheets, SVG assets, and design system templates in the project."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 10
+
+[[tools]]
+name = "search_text"
+description = "Finds class names, CSS variables, design token usages, or markup patterns across the codebase."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 15
+
+[[tools]]
+name = "capture_screenshot"
+description = "Captures an authenticated or unauthenticated visual screenshot of a running component or viewport."
+category = "visual"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 30
+
+[[tools]]
+name = "preview"
+description = "Spins up or interacts with a local component preview environment to inspect layout behavior."
+category = "visual"
+side_effect = "execute"
+requires_approval = true
+timeout_seconds = 60

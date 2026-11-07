@@ -1,0 +1,76 @@
+# LDrago Coding Brain — Tool Allowlist and Permissions
+
+brain = "coding"
+version = "0.1.0"
+
+[[tools]]
+name = "read_file"
+description = "Reads the content of a file within the workspace root, returning text lines with line numbers and file hash."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 10
+
+[[tools]]
+name = "list_files"
+description = "Lists files and directories matching a glob pattern, respecting .gitignore and exclusion rules."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 10
+
+[[tools]]
+name = "search_text"
+description = "Performs regex or literal text search across repository files within allowed token budgets."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 15
+
+[[tools]]
+name = "search_symbol"
+description = "Searches the AST/symbol index for definitions, implementations, and references of functions, structs, or traits."
+category = "inspection"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 15
+
+[[tools]]
+name = "git_status"
+description = "Inspects repository working tree status, showing modified, staged, untracked, and deleted files."
+category = "vcs"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 10
+
+[[tools]]
+name = "git_diff"
+description = "Shows unified diffs between working tree, index, or specific commits."
+category = "vcs"
+side_effect = "read"
+requires_approval = false
+timeout_seconds = 15
+
+[[tools]]
+name = "write_patch"
+description = "Generates a structured unified diff patch for review without modifying files directly."
+category = "mutation"
+side_effect = "none"
+requires_approval = false
+timeout_seconds = 15
+
+[[tools]]
+name = "apply_patch"
+description = "Applies an approved unified diff or replace_range operation to the filesystem after base hash verification."
+category = "mutation"
+side_effect = "write"
+requires_approval = true
+timeout_seconds = 30
+
+[[tools]]
+name = "run_command"
+description = "Executes an approved, non-interactive terminal command inside the sandboxed process group."
+category = "execution"
+side_effect = "execute"
+requires_approval = true
+timeout_seconds = 60

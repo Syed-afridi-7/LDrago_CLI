@@ -1,0 +1,21 @@
+name = "design"
+version = "0.1.0"
+description = "UX flows, accessibility, design tokens, screen states, and developer handoffs"
+architecture = "state_space_model"
+capabilities = ["design", "reasoning"]
+
+[schemas]
+flow = "schemas/flow.json"
+critique = "schemas/critique.json"
+handoff = "schemas/handoff.json"
+tokens = "schemas/tokens.json"
+
+[runtime]
+preferred_endpoint = "http://127.0.0.1:8741/v1"
+model_alias = "ldrago-designer"
+context_window = 32768
+streaming = true
+temperature = 0.3
+
+[tools]
+config = "tools.toml"

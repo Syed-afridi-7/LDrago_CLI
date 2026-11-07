@@ -1,0 +1,21 @@
+name = "coding"
+version = "0.1.0"
+description = "Code explanation, planning, patching, debugging, and verification"
+architecture = "transformer"
+capabilities = ["coding", "reasoning", "tool_calling"]
+
+[schemas]
+plan = "schemas/plan.json"
+operation = "schemas/operation.json"
+answer = "schemas/answer.json"
+diagnosis = "schemas/diagnosis.json"
+
+[runtime]
+preferred_endpoint = "http://127.0.0.1:8741/v1"
+model_alias = "ldrago-coder"
+context_window = 32768
+streaming = true
+temperature = 0.2
+
+[tools]
+config = "tools.toml"

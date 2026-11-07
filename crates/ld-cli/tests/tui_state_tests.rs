@@ -118,3 +118,48 @@ fn test_set_health_and_quit() {
     app.quit();
     assert!(!app.running);
 }
+
+#[test]
+fn test_cycle_focus_reverse() {
+    let mut app = AppState::new();
+    assert_eq!(app.active_pane, ActivePane::Engines);
+
+    // Engines -> Telemetry (reverse)
+    app.cycle_focus_reverse();
+    assert_eq!(app.active_pane, ActivePane::Telemetry);
+
+    // Telemetry -> Chat
+    app.cycle_focus_reverse();
+    assert_eq!(app.active_pane, ActivePane::Chat);
+
+    // Chat -> Engines
+    app.cycle_focus_reverse();
+    assert_eq!(app.active_pane, ActivePane::Engines);
+}
+
+#[test]
+fn test_replace_last_message() {
+    let mut app = AppState::new();
+
+    // Replace on empty app adds the message
+    app.replace_last_message("LDrago", "Initial text");
+    assert_eq!(app.messages.len(), 1);
+    assert_eq!(app.messages[0], ("LDrago".to_string(), "Initial text".to_string()));
+
+    // Replace modifies the last turn
+    app.replace_last_message("LDrago", "Updated response");
+    assert_eq!(app.messages.len(), 1);
+    assert_eq!(app.messages[0], ("LDrago".to_string(), "Updated response".to_string()));
+}
+
+#[test]
+fn test_submit_input_resets_scroll_offset() {
+    let mut app = AppState::new();
+    app.scroll_offset = 15;
+    app.handle_char('h');
+    app.handle_char('i');
+
+    let submitted = app.submit_input();
+    assert_eq!(submitted, Some("hi".to_string()));
+    assert_eq!(app.scroll_offset, 0);
+}

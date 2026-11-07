@@ -65,6 +65,15 @@ impl AppState {
         };
     }
 
+    /// Cycle active pane focus in reverse: Engines -> Telemetry -> Chat -> Engines.
+    pub fn cycle_focus_reverse(&mut self) {
+        self.active_pane = match self.active_pane {
+            ActivePane::Engines => ActivePane::Telemetry,
+            ActivePane::Telemetry => ActivePane::Chat,
+            ActivePane::Chat => ActivePane::Engines,
+        };
+    }
+
     /// Cycle selected brain: Coding -> Design -> General -> Coding.
     pub fn cycle_brain(&mut self) {
         self.selected_brain = match self.selected_brain {
@@ -103,6 +112,7 @@ impl AppState {
     pub fn submit_input(&mut self) -> Option<String> {
         let trimmed = self.input.trim().to_string();
         self.input.clear();
+        self.scroll_offset = 0;
         if trimmed.is_empty() {
             None
         } else {
@@ -126,6 +136,16 @@ impl AppState {
     pub fn append_to_last_message(&mut self, chunk: &str) {
         if let Some((_, content)) = self.messages.last_mut() {
             content.push_str(chunk);
+        }
+    }
+
+    /// Replace the content of the most recent message if it exists, or push a new one.
+    pub fn replace_last_message(&mut self, sender: &str, text: &str) {
+        if let Some((s, content)) = self.messages.last_mut() {
+            *s = sender.to_string();
+            *content = text.to_string();
+        } else {
+            self.add_message(sender, text);
         }
     }
 

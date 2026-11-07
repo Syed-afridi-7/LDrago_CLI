@@ -7,3 +7,4 @@ pub mod plan;
 pub mod progress;
 pub mod run;
 pub mod train;
+pub mod tui;

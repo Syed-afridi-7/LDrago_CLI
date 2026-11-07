@@ -39,6 +39,10 @@ async fn main() -> anyhow::Result<()> {
     let router = build_router(&config);
 
     match cli.command {
+        Some(Commands::Tui) => {
+            commands::tui::execute_tui(&router, &config).await?;
+        }
+
         Some(Commands::Version) | None => {
             commands::logo::render_ldrago_dragon();
             println!("========================================================");

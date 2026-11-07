@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/tokenizer", "src/models"]
+packages = ["src/tokenizer", "src/models", "src/serve"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]

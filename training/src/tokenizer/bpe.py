@@ -79,8 +79,18 @@ class BPETokenizer:
     def vocab_size(self) -> int:
         return self.special_offset + 256 + len(self.merges)
 
-    def train(self, text: str, vocab_size: int) -> None:
+    def train(
+        self,
+        text: str,
+        vocab_size: Optional[int] = None,
+        target_vocab_size: Optional[int] = None,
+    ) -> None:
         """Train BPE merges on input text until vocab_size is reached or no frequent pairs remain."""
+        if vocab_size is None:
+            vocab_size = target_vocab_size
+        if vocab_size is None:
+            raise ValueError("Must provide vocab_size or target_vocab_size")
+
         # Re-initialize vocabulary to clear previous merges
         self._init_vocab()
 

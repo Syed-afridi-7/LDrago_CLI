@@ -1,0 +1,76 @@
+name: Release
+
+'on':
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build Release (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            artifact: ldrago-windows-x86_64.zip
+            bin: ldrago.exe
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            artifact: ldrago-linux-x86_64.tar.gz
+            bin: ldrago
+          - target: x86_64-apple-darwin
+            os: macos-13
+            artifact: ldrago-macos-x86_64.tar.gz
+            bin: ldrago
+          - target: aarch64-apple-darwin
+            os: macos-14
+            artifact: ldrago-macos-aarch64.tar.gz
+            bin: ldrago
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Build binary
+        run: cargo build --release --bin ldrago --target ${{ matrix.target }}
+
+      - name: Package Windows artifact
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $binPath = "target/${{ matrix.target }}/release/${{ matrix.bin }}"
+          Compress-Archive -Path $binPath -DestinationPath "${{ matrix.artifact }}" -Force
+          $hash = (Get-FileHash -Path "${{ matrix.artifact }}" -Algorithm SHA256).Hash.ToLower()
+          "$hash  ${{ matrix.artifact }}" | Out-File -FilePath "${{ matrix.artifact }}.sha256" -Encoding utf8NoBOM
+
+      - name: Package Unix artifact
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          chmod +x "target/${{ matrix.target }}/release/${{ matrix.bin }}"
+          tar -czvf "${{ matrix.artifact }}" -C "target/${{ matrix.target }}/release" "${{ matrix.bin }}"
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "${{ matrix.artifact }}" > "${{ matrix.artifact }}.sha256"
+          else
+            shasum -a 256 "${{ matrix.artifact }}" > "${{ matrix.artifact }}.sha256"
+          fi
+
+      - name: Upload Release Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ matrix.artifact }}
+            ${{ matrix.artifact }}.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

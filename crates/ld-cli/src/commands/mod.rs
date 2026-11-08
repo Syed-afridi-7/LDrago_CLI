@@ -8,3 +8,5 @@ pub mod progress;
 pub mod run;
 pub mod train;
 pub mod tui;
+
+pub use tui::{execute_repl, execute_tui};

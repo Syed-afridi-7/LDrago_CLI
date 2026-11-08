@@ -33,3 +33,4 @@ crossterm = { workspace = true }
 assert_cmd = { workspace = true }
 predicates = { workspace = true }
 tempfile = { workspace = true }
+async-trait = { workspace = true }

@@ -39,11 +39,11 @@ async fn main() -> anyhow::Result<()> {
     let router = build_router(&config);
 
     match cli.command {
-        Some(Commands::Tui) => {
-            commands::tui::execute_tui(&router, &config).await?;
+        Some(Commands::Tui) | None => {
+            commands::tui::execute_repl(&router, &config).await?;
         }
 
-        Some(Commands::Version) | None => {
+        Some(Commands::Version) => {
             commands::logo::render_ldrago_dragon();
             println!("========================================================");
             println!("  LDrago CLI — Local Twin AI Platform (v{})", env!("CARGO_PKG_VERSION"));

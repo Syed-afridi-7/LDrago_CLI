@@ -22,6 +22,7 @@ pub struct Cli {
 #[derive(Subcommand, Debug, Clone, PartialEq)]
 pub enum Commands {
     /// Launch interactive Terminal User Interface (TUI)
+    #[command(alias = "repl")]
     Tui,
     /// Run diagnostic probes across all three AI engines
     Doctor,

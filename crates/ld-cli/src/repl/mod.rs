@@ -2,9 +2,11 @@
 
 pub mod banner;
 pub mod commands;
+pub mod prompt;
 
 pub use banner::print_session_banner;
 pub use commands::{parse_repl_command, ReplCommand};
+pub use prompt::run_interactive_repl;
 
 use ld_schemas::BrainType;
 

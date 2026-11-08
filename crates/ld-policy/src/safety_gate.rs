@@ -36,6 +36,9 @@ impl Default for SafetyGate {
             Regex::new(r"(?i)\bdrop\s+database\b").unwrap(),
             Regex::new(r"(?i)\bdrop\s+table\b").unwrap(),
             Regex::new(r"(?i)\bchmod\s+(-R\s+)?777\s+/").unwrap(),
+            Regex::new(r"(?i)\b(rmdir|rd)\s+.*(/s|/q)").unwrap(),
+            Regex::new(r"(?i)\b(rmdir|rd)\s+.*[a-z]:\\windows").unwrap(),
+            Regex::new(r"(?i)\bdel\s+.*(/f|/s|/q)").unwrap(),
         ];
 
         let credential_patterns = vec![

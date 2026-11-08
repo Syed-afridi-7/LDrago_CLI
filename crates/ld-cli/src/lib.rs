@@ -21,7 +21,7 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug, Clone, PartialEq)]
 pub enum Commands {
-    /// Launch interactive Terminal User Interface (TUI)
+    /// Launch interactive Terminal User Interface (TUI) / streaming agent REPL
     #[command(alias = "repl")]
     Tui,
     /// Run diagnostic probes across all three AI engines
@@ -58,9 +58,9 @@ pub enum Commands {
         #[arg(long)]
         quantized: bool,
     },
-    /// Display the L-Drago Beyblade Dragon logo (Golden, Red & Blue)
+    /// Display the clean technical LDrago banner
     Logo,
-    /// Display the L-Drago Beyblade Dragon logo (alias for logo)
+    /// Display the clean technical LDrago banner (alias for logo)
     Ldrago,
     /// Execute a command safely in a sandboxed, environment-scrubbed subprocess
     Run {

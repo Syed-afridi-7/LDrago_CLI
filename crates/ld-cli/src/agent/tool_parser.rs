@@ -54,7 +54,7 @@ fn is_tool_end(line: &str) -> bool {
 
 /// Strip leading markdown decoration (backticks, bullets, blockquotes).
 fn strip_markdown_prefix(s: &str) -> &str {
-    s.trim().trim_start_matches(|c| c == '`' || c == '*' || c == '-' || c == '>' || c == ' ')
+    s.trim().trim_start_matches(['`', '*', '-', '>', ' '])
 }
 
 /// Parse deterministic tool protocol invocations from completion text.

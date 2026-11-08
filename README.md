@@ -1,63 +1,156 @@
-# 🐉 LDrago CLI — Local Twin AI Platform
+# LDrago CLI — Local Autonomous Coding Agent
 
-```
-           __  __            ____                                 
-          / / / /   ____    / __ \ _____ ____ _ ____ _ ____       
-         / / / /   / __ \  / / / // ___// __ `// __ `// __ \      
-        / /_/ /___/ /_/ / / /_/ // /   / /_/ // /_/ // /_/ /      
-       /_____//_____/___/ /_____//_/    \__,_/ \__, / \____/       
-                                              /____/              
-   ⚡ LIGHTNING / METEO L-DRAGO • LOCAL TWIN AI PLATFORM ⚡
+```text
+>_ LDrago • Local • Autonomous • [Coding]
 ```
 
 [![CI Release](https://github.com/Syed-afridi-7/LDrago_CLI/actions/workflows/release.yml/badge.svg)](https://github.com/Syed-afridi-7/LDrago_CLI/actions/workflows/release.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-gold.svg)](https://opensource.org/licenses/MIT)
-[![Rust](https://img.shields.io/badge/Rust-2021_Edition-crimson.svg)](https://www.rust-lang.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B_From_Scratch-blue.svg)](https://pytorch.org/)
-[![Tests Passing](https://img.shields.io/badge/Tests-146%20Passing-brightgreen.svg)]()
-[![Roadmap](https://img.shields.io/badge/Roadmap-100%25%20Complete-gold.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Rust](https://img.shields.io/badge/Rust-2021_Edition-orange.svg)](https://www.rust-lang.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B_From_Scratch-ee4c2c.svg)](https://pytorch.org/)
+[![Tests Passing](https://img.shields.io/badge/Tests-All%20Passing-brightgreen.svg)]()
 
-> **LDrago CLI** is a modular, high-performance, production-ready local AI terminal platform. It features **two custom neural network architectures engineered completely from first principles in pure PyTorch** (Transformer & State-Space Model / Mamba) alongside local Ollama runtime integration, a zero-trust policy engine, an atomic sandboxed workspace mutator, and an interactive 3-pane Terminal User Interface (TUI).
+> **LDrago CLI** is a local-first, autonomous coding agent and multi-engine AI orchestrator. It couples **two custom neural architectures engineered from first principles in pure PyTorch** (Transformer & State-Space Model / Mamba) with local Ollama runtime adapters, a zero-trust policy engine, an atomic sandboxed workspace mutator, and a streaming Claude Code-style interactive agentic REPL.
 
 ---
 
-## 🌟 Key Architectural Pillars
+## Key Capabilities
 
-### 1. 🧠 Custom Brain #1: Coding Engine (Pure PyTorch Transformer)
-- Built from scratch in `training/src/models/transformer.py` (`LDragoCoder`).
+- **Interactive Agentic REPL**: Natural terminal streaming interface with full scrollback, dynamic prompt prefixes (`ldrago (coding) > `), slash commands (`/model`, `/status`, `/help`, `/clear`, `/exit`), and autonomous tool execution.
+- **Local Brain System Access**: Deterministic tool execution for autonomous file reading (`read_file`), whole-file creation (`write_file`), atomic unified diff patching (`patch_file`), directory inspection (`list_files`), and sandboxed execution (`run_command`).
+- **Workspace Path Containment**: Strict boundary enforcement preventing path traversal (`../`) and unauthorized symlink manipulation outside the active repository.
+- **Zero-Trust Security Gate**: Automated AST/regex safety gate blocking prompt injections, destructive commands (`rm -rf`, disk wipes), and secret credential leakage.
+- **Silent Background Telemetry**: Sub-millisecond latency profiling and token generation metrics collected silently without terminal output pollution.
+- **Custom Neural Architectures**: Zero third-party foundation model dependencies. Two custom architectures written from first principles in standard PyTorch and Rust.
+
+---
+
+## Interactive Agentic REPL
+
+Launch the agent by executing `ldrago` with no arguments (or via `ldrago repl`):
+
+```bash
+$ ldrago
+>_ LDrago • Local • Autonomous • [Coding]
+
+ldrago (coding) > Create a Rust function that calculates Fibonacci numbers and run tests
+[Executing tool: write_file src/fib.rs]
+[Tool Output]:
+Successfully wrote 142 bytes to src/fib.rs
+
+[Executing tool: run_command cargo test]
+[Tool Output]:
+   Compiling demo v0.1.0
+    Finished test [unoptimized + debuginfo] target(s)
+     Running unittests src/lib.rs
+test fib::tests::test_fib ... ok
+test result: ok. 1 passed; 0 failed
+
+I have created `src/fib.rs` and verified that all unit tests pass.
+ldrago (coding) > 
+```
+
+### Slash Commands
+
+| Command | Arguments | Description |
+|---|---|---|
+| `/model` | `[coding \| design \| general]` | Switch active model brain. Without arguments, cycles through available models. |
+| `/status` | *(none)* | Displays active brain engine, workspace path, containment state, and session statistics. |
+| `/help` | *(none)* | Prints interactive command reference and tool usage guidelines. |
+| `/clear` | *(none)* | Clears terminal screen and re-renders the clean 1-line technical banner. |
+| `/exit` | *(none)* | Gracefully terminates the REPL session (`quit` and `exit` also supported). |
+
+---
+
+## Autonomous Tool Protocol
+
+LDrago's agent loop monitors model completions for deterministic tool invocation markers. When a tool call is detected, the agent pauses generation, validates security constraints, executes the operation, and feeds the output back into context for iterative multi-turn reasoning.
+
+### Supported Tools
+
+1. **`read_file <path>`**  
+   Reads file content from the active workspace subject to path containment checks.  
+   ```text
+   TOOL: read_file crates/ld-cli/src/lib.rs
+   ```
+
+2. **`write_file <path>`**  
+   Atomically writes content to disk, automatically generating `.bak` backups of modified files.  
+   ```text
+   TOOL: write_file src/math.rs
+   pub fn add(a: i32, b: i32) -> i32 { a + b }
+   TOOL_END
+   ```
+
+3. **`patch_file <path>`**  
+   Applies deterministic block replacements without overwriting the entire file.  
+   ```text
+   TOOL: patch_file src/math.rs
+   <<<TARGET
+   pub fn add(a: i32, b: i32) -> i32 { a + b }
+   ===REPLACE
+   pub fn add(a: i64, b: i64) -> i64 { a + b }
+   >>>
+   ```
+
+4. **`run_command <command>`**  
+   Executes a shell command inside an environment-scrubbed sandbox subprocess. Sensitive tokens (`AWS_SECRET`, `GITHUB_TOKEN`, passwords) are stripped before execution.  
+   ```text
+   TOOL: run_command cargo check
+   ```
+
+5. **`list_files [optional_path]`**  
+   Lists repository files while respecting `.gitignore` patterns and directory boundaries.  
+   ```text
+   TOOL: list_files src
+   ```
+
+---
+
+## Zero-Trust Safety & Background Telemetry
+
+### Path Containment Sandbox (`crates/ld-sandbox`)
+All filesystem and execution tools run inside a sandboxed dispatcher:
+- **Canonicalization**: Paths are resolved to their canonical root; attempts to escape via `../` or symlinks return immediate containment errors.
+- **Environment Scrubbing**: Subprocesses run in an isolated environment with credentials and secrets filtered out.
+- **Automatic Rollbacks**: Any file patch generates an atomic backup (`.bak`), restorable at any time with `ldrago rollback <file>`.
+
+### Audit Logging & Telemetry Hooks (`crates/ld-cli/src/agent/dispatcher.rs`)
+- **JSONL Audit Trail**: All tool calls, system commands, and policy decisions are appended quietly to `~/.ldrago/audit.jsonl` with timestamps and hashes.
+- **Silent Telemetry**: Generation latency and token rates (tokens/sec) are recorded in the background without polluting terminal stdout.
+- **Extension Points**: The codebase provides explicit code comment hooks for enterprise SIEM forwarding and custom authorization layers:
+  - `record_tool_audit_trail`: Hook for structured SIEM and compliance logging.
+  - `record_inference_telemetry`: Hook for latency, throughput, and hardware metrics.
+
+---
+
+## Core Neural Architectures
+
+LDrago's native brains are engineered entirely from first principles with zero dependencies on third-party model weights:
+
+### 1. Coding Brain: Pure PyTorch Transformer (`LDragoCoder`)
+- Located in `training/src/models/transformer.py`.
 - **Grouped-Query Attention (GQA)**: Configurable query heads with shared key/value heads for memory efficiency.
 - **Rotary Position Embeddings (RoPE)**: Relative position encoding precomputed across complex frequencies.
 - **Pre-RMSNorm**: Root Mean Square Layer Normalization with learnable scaling factors.
-- **SwiGLU Feed-Forward Networks**: Gated activation non-linearities for gradient stability.
-- **Static KV-Cache**: Zero-allocation static tensor buffers enabling $O(1)$ token step latency.
-- **Native Dynamic INT8 Quantization**: 8-bit dynamic symmetric matrix multiplication saving ~75% RAM with zero third-party dependencies.
+- **SwiGLU Non-Linearities**: Gated activation functions providing training stability.
+- **Static KV-Cache**: Pre-allocated static tensor buffers enabling $O(1)$ token step latency during autoregressive generation.
+- **Native Dynamic INT8 Quantization**: Custom 8-bit dynamic symmetric matrix multiplication saving ~75% RAM with zero external C++ extensions.
 
-### 2. 🌀 Custom Brain #2: Design Engine (Pure PyTorch State-Space Model / Mamba)
-- Built from scratch in `training/src/models/ssm.py` (`LDragoDesigner`).
+### 2. Design Brain: Pure PyTorch State-Space Model (`LDragoDesigner`)
+- Located in `training/src/models/ssm.py`.
 - **1D Causal Depthwise Convolution**: Local temporal receptive field filtering.
 - **Selective Scan Recurrence**: Discretized continuous state-space parameters ($\Delta$, $A$, $B$, $C$) varying dynamically per input token.
-- **Constant Memory Footprint**: Linear time complexity $O(L)$ during training, $O(1)$ state evolution per generation step.
+- **Constant Memory Footprint**: Linear time complexity $O(L)$ during training, with $O(1)$ state evolution per generation step.
 
-### 3. 🦙 Local Engine #3: General Runtime (Ollama Adapter)
-- High-throughput local runtime integration via `ld-models` for broad tasks and fallback capabilities.
-
-### 4. 🛡️ Zero-Trust Policy Engine & Path Containment Sandbox (`crates/ld-policy`, `crates/ld-sandbox`)
-- **Safety Gate**: Rejects prompt injection, jailbreaks, destructive shell commands, and secret credential leaks.
-- **Path Containment**: Workspace boundary traversal validator blocking `../` escaping or unauthorized symlink manipulation.
-- **Subprocess Runner**: Scrubbed execution environment automatically stripping API secrets (`AWS_ACCESS`, `TOKEN`, `KEY`, `PASSWORD`) and enforcing execution timeouts.
-- **Atomic Diff Patching & Reversible Checkpoints**: Unified diff previews with automatic `.bak` backups and instant workspace rollback (`ldrago rollback` / `ldrago checkpoint restore`).
-
-### 5. 🖥️ Interactive 3-Pane Terminal UI (`crates/ld-cli/src/tui`)
-- Built with `ratatui` and `crossterm`.
-- **Engines Panel**: Live health probes and instant switching between Coding, Design, and General brains.
-- **Chat Panel**: Dynamic conversational stream with TrueColor formatting, auto-scrolling, and interactive input.
-- **Telemetry Panel**: Real-time generation velocity (tokens/sec), active checkpoints count, policy engine state, and path containment status.
+### 3. General Runtime Engine (Ollama Adapter)
+- High-throughput integration with local Ollama runtimes for general conversational queries and fallback tasks.
 
 ---
 
-## 🚀 Quickstart & Installation
+## Installation & Quickstart
 
-### Option A: One-Line Automated Installer
+### Automated Installer
 
 #### Windows (PowerShell):
 ```powershell
@@ -71,9 +164,9 @@ curl -fsSL https://raw.githubusercontent.com/Syed-afridi-7/LDrago_CLI/main/insta
 
 ---
 
-### Option B: Build From Source
+### Build From Source
 
-Prerequisites:
+**Prerequisites:**
 - [Rust 1.80+](https://rustup.rs)
 - Python 3.10+ & [uv](https://github.com/astral-sh/uv)
 
@@ -82,7 +175,7 @@ Prerequisites:
 git clone https://github.com/Syed-afridi-7/LDrago_CLI.git
 cd LDrago_CLI
 
-# 2. Build the Rust workspace
+# 2. Build release binary
 cargo build --release --workspace
 
 # 3. Setup Python training environment and start local model daemon
@@ -91,70 +184,63 @@ uv venv
 uv run uvicorn src.serve.server:app --host 127.0.0.1 --port 8741
 ```
 
-In another terminal:
+In a separate terminal, launch the agent:
 ```bash
-# Verify system connectivity
+# Run health diagnostics
 ldrago doctor
 
-# Launch the interactive terminal UI
-ldrago tui
+# Launch the interactive agentic REPL
+ldrago
 ```
 
 ---
 
-## 🕹️ CLI Command Reference
+## CLI Command Reference
 
 | Command | Description | Example |
 |---|---|---|
-| `ldrago tui` | Launch the full 3-pane interactive Terminal UI | `ldrago tui` |
-| `ldrago doctor` | Run diagnostic health probes on all 3 brains | `ldrago doctor` |
-| `ldrago progress` | Display live dynamic development roadmap | `ldrago progress` |
-| `ldrago benchmark` | Profile throughput (tok/s) and latency | `ldrago benchmark --brain coding --tokens 32` |
-| `ldrago logo` | Display exclusive L-Drago Beyblade Dragon logo | `ldrago logo` |
+| `ldrago` / `ldrago repl` | Launch the Claude Code-style interactive agentic REPL | `ldrago` |
+| `ldrago doctor` | Run diagnostic health probes across all registered engines | `ldrago doctor` |
+| `ldrago model list` | List registered model engines and connection status | `ldrago model list` |
+| `ldrago progress` | Display development roadmap and milestones | `ldrago progress` |
+| `ldrago benchmark` | Profile throughput (tokens/sec) and latency | `ldrago benchmark --brain coding --tokens 32` |
+| `ldrago logo` | Display clean single-line technical banner | `ldrago logo` |
 | `ldrago run` | Execute a command safely in the scrubbed sandbox | `ldrago run "cargo check" --yes` |
 | `ldrago patch` | Atomically apply unified diff with `.bak` safety | `ldrago patch src/lib.rs --content "..." --yes` |
 | `ldrago rollback` | Revert file to backup generated during patch | `ldrago rollback src/lib.rs` |
-| `ldrago checkpoint`| Create, list, or restore workspace snapshot | `ldrago checkpoint create -d "pre-refactor"` |
-| `ldrago plan` | Generate grounded plan validated with schemas | `ldrago plan "Build user auth service"` |
+| `ldrago checkpoint` | Create, list, or restore workspace snapshots | `ldrago checkpoint create -d "pre-refactor"` |
+| `ldrago plan` | Generate grounded plan validated with JSON schemas | `ldrago plan "Build user auth service"` |
 | `ldrago context` | Scan workspace tree, manifest, or symbols | `ldrago context tree` |
-| `ldrago ask` | Send prompt to a brain with verified citations | `ldrago ask "Write binary search in Rust" --brain coding` |
+| `ldrago ask` | Non-interactive one-shot prompt evaluation | `ldrago ask "Write binary search in Rust" --brain coding` |
 | `ldrago train` | Run local PyTorch training harness | `ldrago train coding --micro --steps 20` |
+| `ldrago version` | Print LDrago version and system architecture info | `ldrago version` |
 
 ---
 
-## 🧪 Comprehensive Automated Test Suite
+## Verification & Testing
 
-LDrago maintains **146 / 146 automated tests passing** (83 Python tests + 63 Rust tests):
+LDrago maintains a comprehensive test suite across Rust and Python workspaces:
 
 ```bash
 # Run Rust workspace test suite
 cargo test --workspace -j 1
 
-# Run Python training, model, and eval test suite
+# Run specific REPL and agent dispatch integration tests
+cargo test --test repl_integration_tests --test agent_dispatch_tests --test tool_parser_tests --test repl_state_tests --test logo_tests
+
+# Run Python training, model, and evaluation test suite
 cd training
 uv run pytest -v
 ```
 
 ---
 
-## 🗺️ 6-Phase Roadmap & Delivery Matrix
-
-| Phase | Milestone | Deliverables | Tests | Status |
-| :---: | :--- | :--- | :---: | :---: |
-| **Phase 0** | **System Scaffolding & Core Neural Architectures** | Pure PyTorch `LDragoCoder` (GQA/RoPE/SwiGLU), `LDragoDesigner` (Mamba SSM), custom 256-byte BPE tokenizer, FastAPI daemon, Rust model contracts. | 35 / 35 | ✅ **100%** |
-| **Phase 1** | **Synthetic Data, Training Loop & Convergence** | Secret redaction, license filtering, `build_adamw`, `CosineWarmupScheduler`, `CheckpointManager`, micro-convergence (>93% loss decrease). | 57 / 57 | ✅ **100%** |
-| **Phase 2** | **Context Engine, Policy Enforcement & Grounded Planning** | High-throughput scanner (`ignore`), keyword symbol indexer, verified file citation extractor, zero-trust safety gate, JSONL audit trail. | 14 / 14 | ✅ **100%** |
-| **Phase 3** | **Scale Pretraining & Model Optimization** | 125M parameter tier configs, pure PyTorch dynamic INT8 quantization, static pre-allocated KV-cache, `torchrun` DDP harness, RunPod A100 provisioning. | 15 / 15 | ✅ **100%** |
-| **Phase 4** | **Sandboxing, Mutations & Reversible Workspaces** | `PathContainment` boundary validation, `CommandRunner` subprocess sandbox with env scrubbing, `PatchEngine` atomic diffs, `CheckpointManager`. | 14 / 14 | ✅ **100%** |
-| **Phase 5** | **Interactive TUI, Packaging & Production Hardening** | Responsive 3-pane `ratatui` + `crossterm` TUI, multi-target GitHub Actions release workflow, one-line PowerShell & Bash installers. | 11 / 11 | ✅ **100%** |
-
----
-
-## ⚖️ Zero Third-Party Foundation Model Guarantee
+## Zero Third-Party Model Guarantee
 
 LDrago's custom brains (`LDragoCoder` and `LDragoDesigner`) do **NOT** depend on HuggingFace Transformers, OpenAI API, Anthropic API, or third-party pre-trained weights. Every neural layer, attention matrix, convolution state, and tokenizer merge is written from first principles in standard PyTorch and Rust.
 
 ---
 
-## 📜 License
+## License
+
 Distributed under the MIT License. See `LICENSE` for more information.
